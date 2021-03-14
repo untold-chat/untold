@@ -1,0 +1,49 @@
+version: "3.6"
+
+services:
+  node-server:
+    build: ./server
+    image: untold-node
+    volumes:
+      - ./server:/app
+    ports:
+      - 8000:8000
+    container_name: untold-node-server
+    environment:
+      NODE_ENV: dev
+      POSTGRES_PASSWORD: untoldPassword
+      POSTGRES_USER: untoldAdmin
+      POSTGRES_DB: testDB
+      POSTGRES_HOST: untold-postgres-db
+    depends_on:
+      - postgres-db
+
+  react-server-dev:
+    build: ./client
+    image: untold-react
+    volumes:
+      - ./client:/ui
+    ports:
+      - 3000:3000
+    container_name: untold-react-server-dev
+    environment:
+      mode: dev
+
+  redis:
+    image: redis
+    container_name: untold-redis-dev
+    ports:
+      - 6379:6379
+
+  postgres-db:
+    build: ./postgreSQL
+    image: untold-postgres
+    container_name: untold-postgres-dev
+    volumes:
+      - ./postgreSQL/pgdata:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: untoldPassword
+      POSTGRES_USER: untoldAdmin
+      POSTGRES_DB: testDB
